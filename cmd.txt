@@ -1,20 +1,16 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-# 強制匯入 Termux 的 Python 路徑，確保抓得到套件
-export PYTHONPATH='/data/data/com.termux/files/usr/lib/python3.12/site-packages'
-PYTHON='/data/data/com.termux/files/usr/bin/python3'
-CURL='/data/data/com.termux/files/usr/bin/curl'
-
+# 1. 簡化工具定義，直接使用系統命令
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 
-echo "🌐 [STEP 1] 下載 GitHub 清單..."
-$CURL -L -k -s "$URL_LIST" -o "$SRC"
+# 2. 下載清單
+curl -L -k -s "$URL_LIST" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [STEP 2] 解析中..."
+echo "🚀 [開始解析直播源...]"
 
 while read -r line; do
     [ -z "$line" ] && continue
@@ -23,9 +19,8 @@ while read -r line; do
 
     if [ -n "$LINK" ]; then
         echo "📡 正在解析: $NAME"
-        # 增加解析參數，模擬 iOS 客戶端繞過阻擋
-        # 在 GitHub 的 cmd.txt 中，將 REAL= 那行替換為：
-        REAL=$($PYTHON -m yt_dlp --no-warnings -g -f "best[ext=mp4]/best" "$LINK" 2>/dev/null)
+        # 使用你剛才測試成功的「最簡指令」
+        REAL=$(python3 -m yt_dlp -g -f b "$LINK" 2>/dev/null)
         
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1,$NAME" >> "$DEST"
@@ -36,5 +31,4 @@ while read -r line; do
         fi
     fi
 done < "$SRC"
-echo "✨ 完成！檔案在: $DEST"
-
+echo "✨ 完成！清單已存至: $DEST"
