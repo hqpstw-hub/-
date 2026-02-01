@@ -1,6 +1,6 @@
 su
 # GitHub 網頁連結 (我會在這裡自動轉換它)
-WEB_URL="https://github.com/hqpstw-hub/-/blob/6e25c6082d1ed33b9df680bd8f499ecedba53912/cmd.txt"
+WEB_URL="https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt"
 # 自動轉換成 Raw 連結
 RAW_URL=$(echo $WEB_URL | sed 's|github.com|raw.githubusercontent.com|' | sed 's|/blob/|/|')
 
@@ -14,3 +14,4 @@ chmod 777 "$TV_PATH"
 
 echo "✅ 已經強行將 GitHub 網頁轉為 Raw 下載完成！"
 echo "🚀 請去 Termux 輸入 ./tv 驗收成果"
+
