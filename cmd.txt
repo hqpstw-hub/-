@@ -1,25 +1,31 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-# 1. 簡化工具定義，直接使用系統命令
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 
-# 2. 下載清單
+# 下載清單
 curl -L -k -s "$URL_LIST" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [開始解析直播源...]"
+echo "🚀 [開始智能解析...]"
 
 while read -r line; do
     [ -z "$line" ] && continue
+
+    # 1. 處理分組標籤 (保留 #EXTGRP)
+    if echo "$line" | grep -q "#EXTGRP"; then
+        echo "$line" >> "$DEST"
+        continue
+    fi
+
+    # 2. 處理頻道行
     LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ]*")
     NAME=$(echo "$line" | cut -d',' -f1)
 
     if [ -n "$LINK" ]; then
         echo "📡 正在解析: $NAME"
-        # 使用你剛才測試成功的「最簡指令」
         REAL=$(python3 -m yt_dlp -g -f b "$LINK" 2>/dev/null)
         
         if [ -n "$REAL" ]; then
@@ -27,8 +33,11 @@ while read -r line; do
             echo "$REAL" >> "$DEST"
             echo "   ✅ 成功"
         else
+            # 3. 處理失敗清單 (保留名稱，方便追蹤)
+            echo "#EXTINF:-1,$NAME [解析失敗]" >> "$DEST"
+            echo "http://0.0.0.0/failed" >> "$DEST"
             echo "   ❌ 失敗"
         fi
     fi
 done < "$SRC"
-echo "✨ 完成！清單已存至: $DEST"
+echo "✨ 完成！分組已保留，失敗已標記。"
