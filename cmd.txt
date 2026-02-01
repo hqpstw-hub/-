@@ -24,7 +24,8 @@ while read -r line; do
     if [ -n "$LINK" ]; then
         echo "📡 正在解析: $NAME"
         # 增加解析參數，模擬 iOS 客戶端繞過阻擋
-        REAL=$($PYTHON -m yt_dlp --no-warnings --extractor-args "youtube:player-client=ios,web" -g -f b "$LINK" 2>/dev/null)
+        # 在 GitHub 的 cmd.txt 中，將 REAL= 那行替換為：
+        REAL=$($PYTHON -m yt_dlp --no-warnings -g -f "best[ext=mp4]/best" "$LINK" 2>/dev/null)
         
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1,$NAME" >> "$DEST"
@@ -36,3 +37,4 @@ while read -r line; do
     fi
 done < "$SRC"
 echo "✨ 完成！檔案在: $DEST"
+
