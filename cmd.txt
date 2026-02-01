@@ -1,0 +1,40 @@
+#!/data/data/com.termux/files/usr/bin/sh
+export LANG=zh_TW.UTF-8
+
+# 工具全路徑
+PYTHON='/data/data/com.termux/files/usr/bin/python3'
+CURL='/data/data/com.termux/files/usr/bin/curl'
+
+# 這裡換成你的 OneDrive 清單直連網址
+URL_LIST='https://1drv.ms/t/c/8c0a574ce4d46138/IQAwsFs2-myhTpU97w3jhVJDAUfJv9k2yyHoaY3Ofl-A6SQ?download=1'
+SRC='/data/data/com.termux/files/home/twTVlist.txt'
+DEST='/sdcard/Download/twTV.m3u'
+
+echo "🌐 [STEP 1] 下載 OneDrive 清單..."
+$CURL -L -k "$URL_LIST" -o "$SRC"
+sed -i 's/\r//g' "$SRC"
+
+echo "#EXTM3U" > "$DEST"
+echo "🚀 [STEP 2] 解析中..."
+
+while read -r line; do
+    [ -z "$line" ] && continue
+    # 提取網址（支援各種 YouTube 格式）
+    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ]*")
+    NAME=$(echo "$line" | cut -d',' -f1 | cut -d' ' -f1)
+
+    if [ -n "$LINK" ]; then
+        echo "📡 正在解析: $NAME"
+        REAL=$($PYTHON -m yt_dlp --no-warnings --extractor-args "youtube:player-client=ios,web" -g -f b "$LINK" 2>/dev/null)
+        
+        if [ -n "$REAL" ]; then
+            echo "#EXTINF:-1,$NAME" >> "$DEST"
+            echo "$REAL" >> "$DEST"
+            echo "   ✅ 成功"
+        else
+            echo "   ❌ 失敗"
+        fi
+    fi
+done < "$SRC"
+
+echo "✨ 完成！檔案在: $DEST"
