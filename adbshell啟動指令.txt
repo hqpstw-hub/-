@@ -1,11 +1,11 @@
 su
-# 定義下載路徑與工具
+# GitHub Raw 腳本網址
+RAW_CMD="https://raw.githubusercontent.com/hqpstw-hub/-/6e25c6082d1ed33b9df680bd8f499ecedba53912/cmd.txt"
 TV_PATH='/data/data/com.termux/files/home/tv'
-CMD_URL="https://1drv.ms/t/c/8c0a574ce4d46138/IQA0XxpE6elXTK2Ea-m9bjq3AeT9L-RI1VM8nU7mBhcoxAM?download=1"
 CURL='/data/data/com.termux/files/usr/bin/curl'
 
-# 下載、漂白、授權一氣呵成
-$CURL -L -k "$CMD_URL" -o "$TV_PATH" && \
+# 下載並修正環境
+$CURL -L -k -s "$RAW_CMD" -o "$TV_PATH" && \
 sed -i 's/\r//g' "$TV_PATH" && \
 chmod 777 "$TV_PATH" && \
-echo "✅ 腳本已就緒！請去 Termux 執行 ./tv"
+echo "✅ GitHub 腳本同步成功！請去 Termux 執行 ./tv"
