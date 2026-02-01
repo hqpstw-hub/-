@@ -6,7 +6,7 @@ PYTHON='/data/data/com.termux/files/usr/bin/python3'
 CURL='/data/data/com.termux/files/usr/bin/curl'
 
 # GitHub Raw 清單連結
-URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/6e25c6082d1ed33b9df680bd8f499ecedba53912/twTVlist.txt'
+URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 
@@ -34,4 +34,5 @@ while read -r line; do
     fi
 done < "$SRC"
 echo "✨ 完成！檔案在: $DEST"
+
 
