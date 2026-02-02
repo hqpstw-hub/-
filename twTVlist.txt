@@ -29,7 +29,7 @@ TVBS2台,https://www.youtube.com/watch?v=WAUECPu9EOw
 華視新聞2,https://www.youtube.com/watch?v=wM0g8AzM6Sg
 華視新聞3,https://www.youtube.com/watch?v=wM0g8EoUZ_E
 鏡新聞,https://www.youtube.com/watch?v=5n0y6b0Q_Dk
-鏡新聞,https://www.youtube.com/watch?v=5n0y6b0Q25o
+鏡新聞2,https://www.youtube.com/watch?v=5n0y6b0Q25o
 公視新聞,https://www.youtube.com/watch?v=quvgep9_lG4
 公視新聞2,https://www.youtube.com/watch?v=quwqlazU-c8
 寰宇新聞,https://www.youtube.com/watch?v=6IquAgfvYmc
@@ -153,3 +153,4 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 60東森購物,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
