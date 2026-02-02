@@ -2,10 +2,10 @@
 中天新聞,https://www.youtube.com/watch?v=FYKaMV-xcjo
 中天新聞2,https://www.youtube.com/watch?v=vr3XyVCR4T0
 中天政論頻道,https://www.youtube.com/watch?v=-Bk_tdwVDPQ
-中視新聞,https://www.youtube.com/watch?v=TCnaIE_SAt0
-TVBS新聞,https://news-p-edge.cdn.hinet.net/TVBS-N/index.m3u8
-TVBS2,https://www.youtube.com/watch?v=m_dhMSvUCIc
-TVBS2台,https://www.youtube.com/watch?v=WAUECPu9EOw
+中視新聞,https://www.youtube.com/watch?v=baDV1O5EBP0
+中視新聞2,https://www.youtube.com/watch?v=TCnaIE_SAtM
+TVBS新聞,https://www.youtube.com/watch?v=m_dhMSvUCIc
+TVBS-t,https://www.youtube.com/watch?v=WAUECPu9EOw
 非凡新聞,https://www.youtube.com/watch?v=wAUx3pywTt8
 非凡商業台,https://www.youtube.com/watch?v=eA6Aczd3FZM
 非凡商業台2,https://www.youtube.com/watch?v=xLqt2p6Dowo
@@ -138,6 +138,7 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 60東森購物,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
 
