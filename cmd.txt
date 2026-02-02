@@ -3,51 +3,65 @@
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
+LOST='/sdcard/Download/lostlist.txt'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 下載與環境清理
+# 1. 下載與清洗
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-CURRENT_GRP="未分類"  # 預設分組
+echo "--- 📋 失效清單 (記錄日期: $(date)) ---" > "$LOST"
+echo "🚀 [全能解析 + 源檢測模式啟動]"
+
+CURRENT_GRP="未分類"
 
 while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 判定分組：行首為 # (例如 #新聞)
+    # 2. 分組識別
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
-        echo "📍 切換分組至: $CURRENT_GRP"
+        echo "📍 目前區域: $CURRENT_GRP"
         continue
     fi
 
-    # 3. 頻道處理
+    # 3. 頻道解析與網址檢測
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        echo "📡 處理: $NAME [$CURRENT_GRP]"
+        echo "📡 檢測中: $NAME"
         
-        # 準備寫入內容的標頭 (加入 group-title)
-        INF_LINE="#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME"
-
+        # 判定是否為 YouTube 連結
         if echo "$LINK" | grep -qi "youtube.com"; then
-            # YouTube 解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
-            if [ -n "$REAL" ]; then
-                echo "$INF_LINE" >> "$DEST"
+        else
+            REAL="$LINK"
+        fi
+
+        # --- 方案 A: 輕量化檢測邏輯 ---
+        if [ -n "$REAL" ]; then
+            # 測試連結是否連得通 (限時 2 秒，只取標頭)
+            # 如果是 YouTube 的 REAL 連結通常很長，我們測它的響應代碼
+            CHECK=$(curl -I -s -m 2 "$REAL" | grep -E "HTTP/.* 200|HTTP/.* 30[12]")
+            
+            if [ -n "$CHECK" ]; then
+                echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
                 echo "$REAL" >> "$DEST"
+                echo "   ✅ 通過"
             else
-                echo "$INF_LINE [解析失敗]" >> "$DEST"
-                echo "http://0.0.0.0/failed" >> "$DEST"
+                echo "$NAME,$LINK (連線超時或失效)" >> "$LOST"
+                echo "   ❌ 失效 (已移至 lostlist)"
             fi
         else
-            # 直連
-            echo "$INF_LINE" >> "$DEST"
-            echo "$LINK" >> "$DEST"
+            echo "$NAME,$LINK (解析失敗)" >> "$LOST"
+            echo "   ❌ 解析失敗 (已移至 lostlist)"
         fi
     fi
 done < "$SRC"
-echo "✨ 完工！分組已注入 #EXTINF 標籤中。"
+
+echo "✨ 完成！"
+echo "✅ 有效源: $DEST"
+echo "⚠️ 失效源: $LOST"
