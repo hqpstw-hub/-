@@ -47,6 +47,14 @@ while read -r line || [ -n "$line" ]; do
                 REAL="$LINK"
             fi
         fi
+        # 針對 iill.top 的超級偽裝
+      if echo "$LINK" | grep -qiE "iill.top|4gtv"; then
+          # 同時注入 UA, Referer 和 Origin，這幾乎是 VLC 的全套裝備
+          REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
+      else
+          REAL="$LINK"
+      fi
+
 
         # 4. 方案 A: 輕量化檢測與輸出
         if [ -n "$REAL" ]; then
@@ -70,3 +78,4 @@ while read -r line || [ -n "$line" ]; do
 done < "$SRC"
 
 echo "✨ 完成！偽裝已就緒。"
+
