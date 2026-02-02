@@ -67,11 +67,13 @@ while read -r line || [ -n "$line" ]; do
                 echo "   ✅ 通過並已注入偽裝"
             else
                 # 記錄到失效清單
-                echo "$NAME,$LINK (連線超時或拒絕)" >> "$LOST"
+               # echo "$NAME,$LINK (連線超時或拒絕)" >> "$LOST"
+                echo "$NAME,$LINK (連線超時或拒絕)" >> "$DEST"
                 echo "   ❌ 失效 (已記錄到 lostlist)"
             fi
         else
-            echo "$NAME,$LINK (解析失敗)" >> "$LOST"
+            # echo "$NAME,$LINK (解析失敗)" >> "$LOST"
+            echo "$NAME,$LINK (解析失敗)" >> "$DEST"
             echo "   ❌ 解析失敗"
         fi
     fi
@@ -80,3 +82,4 @@ done < "$SRC"
 echo "✨ 全部任務完成！"
 echo "✅ 有效源：$DEST"
 echo "⚠️ 失效源：$LOST"
+
