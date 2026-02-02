@@ -56,14 +56,16 @@ while read -r line || [ -n "$line" ]; do
                 echo "$REAL" >> "$DEST"
                 echo "   ✅ 通過並已注入偽裝"
             else
-                echo "$NAME,$LINK (連線超時或拒絕)" >> "$LOST"
+#原輸出LOST改成DEST不進行遺失清單
+                echo "$NAME,$LINK (連線超時或拒絕)" >> "$DEST"
                 echo "   ❌ 失效 (已記錄到 lostlist)"
             fi
         else
-            echo "$NAME,$LINK (解析失敗)" >> "$LOST"
+            echo "$NAME,$LINK (解析失敗)" >> "$DEST"
             echo "   ❌ 解析失敗"
         fi
     fi
 done < "$SRC"
 
 echo "✨ 全部任務完成！"
+
