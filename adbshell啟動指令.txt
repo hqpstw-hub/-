@@ -1,11 +1,10 @@
-su
-# 最新的 Raw 腳本連結
-RAW_CMD="https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt"
-TV_PATH='/data/data/com.termux/files/home/tv'
-CURL='/data/data/com.termux/files/usr/bin/curl'
+# --- Termux 內部一鍵更新與啟動指令 ---
 
-# 下載、去雜質、授權
-$CURL -L -k -s "$RAW_CMD" -o "$TV_PATH" && \
-sed -i 's/\r//g' "$TV_PATH" && \
-chmod 777 "$TV_PATH" && \
-echo "✅ GitHub 原始頻道腳本校準成功！"
+# 1. 重新抓取腳本並強制轉為 Linux 格式 (防止格式跑掉)
+curl -L -k -s "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt" -o ~/tv && sed -i 's/\r//g' ~/tv && chmod +x ~/tv
+
+# 2. 執行腳本 (使用 sh 直接呼叫最穩定)
+sh ~/tv
+
+# 3. 檢查 Cron 守衛狀態 (確保兩天後的自動更新有效)
+pgrep crond && echo "✅ 守衛在線" || (crond && echo "⚠️ 守衛重啟中")
