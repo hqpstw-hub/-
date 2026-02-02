@@ -14,7 +14,7 @@ echo "#EXTM3U" > "$DEST"
 echo "🚀 [全頻道降維轉發模式：119 頻道全量注入]"
 
 CURRENT_GRP="未分類"
-UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+UA="VLC/3.0.12"
 
 while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -56,3 +56,4 @@ while read -r line || [ -n "$line" ]; do
 done < "$SRC"
 
 echo "✨ 全部 119 個頻道處理完成！"
+
