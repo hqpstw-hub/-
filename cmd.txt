@@ -5,58 +5,47 @@ SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-echo "--- 🛠️ 萬用格式除錯模式 ---"
-
-# 1. 下載與清洗
+# 1. 下載與環境清理
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
-echo "📈 讀取總行數: $(wc -l < "$SRC")"
 
 echo "#EXTM3U" > "$DEST"
+echo "🚀 [全能解析器：分組標籤 + 萬用網址模式]"
 
 while read -r line || [ -n "$line" ]; do
+    # 移除前後空白
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # A. 判斷分組：包含 #EXTGRP 或 [文字] 格式
-    if echo "$line" | grep -qi "#EXTGRP" || echo "$line" | grep -q "^\[.*\]$"; then
-        echo "📍 捕捉分組: $line"
-        # 如果是 [新聞] 格式，轉換成標準 #EXTGRP 格式以利播放器識別
-        CLEAN_GRP=$(echo "$line" | tr -d '[]')
-        echo "#EXTGRP:$CLEAN_GRP" >> "$DEST"
+    # 2. 簡易邏輯：只要行首是 # 且不含逗號，就是分組
+    if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
+        GRP_NAME=$(echo "$line" | tr -d '#')
+        echo "📍 捕捉分組: $GRP_NAME"
+        echo "#EXTGRP:$GRP_NAME" >> "$DEST"
         continue
     fi
 
-    # B. 萬用網址提取邏輯 (符合 XXX://XX.XX/X 結構)
-    # 此正則確保有協定、有網域點、有後續路徑
-    LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
+    # 3. 頻道處理：提取名稱與萬用網址 (XXX://XX.XX/X)
     NAME=$(echo "$line" | cut -d',' -f1)
+    LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        echo "📡 處理頻道: $NAME"
-        
+        echo "📡 處理: $NAME"
         if echo "$LINK" | grep -qi "youtube.com"; then
-            # YouTube 走解析流程
+            # YT 走解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
             if [ -n "$REAL" ]; then
                 echo "#EXTINF:-1,$NAME" >> "$DEST"
                 echo "$REAL" >> "$DEST"
-                echo "   ✅ YT 解析成功"
             else
                 echo "#EXTINF:-1,$NAME [YT解析失敗]" >> "$DEST"
                 echo "http://0.0.0.0/failed" >> "$DEST"
-                echo "   ❌ YT 解析失敗"
             fi
         else
-            # 非 YouTube (如 .m3u8) 直接寫入，不需解析
+            # 直連 (m3u8等) 直接輸出
             echo "#EXTINF:-1,$NAME" >> "$DEST"
             echo "$LINK" >> "$DEST"
-            echo "   🔗 直連網址已加入"
         fi
-    else
-        echo "⚠️ 無法識別: $line"
     fi
 done < "$SRC"
-
-echo "--- 🏁 任務完成 ---"
-echo "產生的 M3U 總行數: $(wc -l < $DEST)"
+echo "✨ 成功！請檢查 Download/twTV.m3u"
