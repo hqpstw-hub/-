@@ -3,34 +3,34 @@
 中天新聞2,https://www.youtube.com/watch?v=vr3XyVCR4T0
 中天政論頻道,https://www.youtube.com/watch?v=-Bk_tdwVDPQ
 中視新聞,https://news-p-edge.cdn.hinet.net/CTV-N/index.m3u8
-#中視新聞2,https://www.youtube.com/watch?v=TCnaIE_SAt0
+中視新聞2,https://www.youtube.com/watch?v=TCnaIE_SAt0
 中視新聞3,https://www.youtube.com/watch?v=TCnaIE_SAtM
 TVBS新聞,https://news-p-edge.cdn.hinet.net/TVBS-N/index.m3u8
 #TVBS新聞2,https://www.youtube.com/watch?v=V0MQyM_D96A
 TVBS2台,https://www.youtube.com/watch?v=m_dhMSvUCIc
-#TVBS,https://www.youtube.com/watch?v=mE9_pL6P2eE
+TVBS,https://www.youtube.com/watch?v=mE9_pL6P2eE
 TVBS2台,https://www.youtube.com/watch?v=WAUECPu9EOw
-#非凡新聞,https://www.youtube.com/watch?v=k_N4Vz0XfK4
+非凡新聞,https://www.youtube.com/watch?v=k_N4Vz0XfK4
 非凡新聞2,https://www.youtube.com/watch?v=wAUx3pywTt8
 非凡商業台,https://www.youtube.com/watch?v=eA6Aczd3FZM
 非凡商業台2,https://www.youtube.com/watch?v=xLqt2p6Dowo
-#東森新聞,https://www.youtube.com/watch?v=RaIJ767Bj_M
+東森新聞,https://www.youtube.com/watch?v=RaIJ767Bj_M
 東森新聞2,https://www.youtube.com/watch?v=V1p33hqPrUk
 民視新聞,https://news-p-edge.cdn.hinet.net/FTV-N/index.m3u8
 民視新聞2,https://www.youtube.com/watch?v=ylYJSBUgaMA
 三立新聞,https://news-p-edge.cdn.hinet.net/SET-N/index.m3u8
-#三立新聞2,https://www.youtube.com/watch?v=oZdzzJID-vE
-三立新聞,https://www.youtube.com/watch?v=QsGswQvRmtU
-#三立iNEWS,https://www.youtube.com/watch?v=CKj7Bh4ss_k
+三立新聞2,https://www.youtube.com/watch?v=oZdzzJID-vE
+三立新聞3,https://www.youtube.com/watch?v=QsGswQvRmtU
+三立iNEWS,https://www.youtube.com/watch?v=CKj7Bh4ss_k
 三立新聞2台,https://www.youtube.com/watch?v=pF507BLtbqU
 台視新聞,https://news-p-edge.cdn.hinet.net/TTV-N/index.m3u8
 台視新聞2,https://www.youtube.com/watch?v=xL0ch83RAK8
 華視新聞,https://news-p-edge.cdn.hinet.net/CTS-N/index.m3u8
-#華視新聞2,https://www.youtube.com/watch?v=wM0g8AzM6Sg
+華視新聞2,https://www.youtube.com/watch?v=wM0g8AzM6Sg
 華視新聞3,https://www.youtube.com/watch?v=wM0g8EoUZ_E
-#鏡新聞,https://www.youtube.com/watch?v=5n0y6b0Q_Dk
+鏡新聞,https://www.youtube.com/watch?v=5n0y6b0Q_Dk
 鏡新聞2,https://www.youtube.com/watch?v=5n0y6b0Q25o
-#公視新聞,https://www.youtube.com/watch?v=quvgep9_lG4
+公視新聞,https://www.youtube.com/watch?v=quvgep9_lG4
 公視新聞2,https://www.youtube.com/watch?v=quwqlazU-c8
 寰宇新聞,https://www.youtube.com/watch?v=6IquAgfvYmc
 寰宇新聞台灣台,https://www.youtube.com/watch?v=w87VGpgd90U
@@ -153,5 +153,6 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 60東森購物,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
