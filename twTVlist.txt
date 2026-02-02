@@ -2,13 +2,13 @@
 中天新聞,https://www.youtube.com/watch?v=FYKaMV-xcjo
 中天新聞2,https://www.youtube.com/watch?v=vr3XyVCR4T0
 中天政論頻道,https://www.youtube.com/watch?v=-Bk_tdwVDPQ
-中視新聞,https://news-p-edge.cdn.hinet.net/CTV-N/index.m3u8
+中視新聞,https://news-p-edge.cdn.hinet.net/CTV-N/index.m3u8 #被吃掉
 中視新聞2,https://www.youtube.com/watch?v=TCnaIE_SAt0
 中視新聞3,https://www.youtube.com/watch?v=TCnaIE_SAtM
 TVBS新聞,https://news-p-edge.cdn.hinet.net/TVBS-N/index.m3u8
-#TVBS新聞2,https://www.youtube.com/watch?v=V0MQyM_D96A
+TVBS新聞2,https://www.youtube.com/watch?v=V0MQyM_D96A
 TVBS2台,https://www.youtube.com/watch?v=m_dhMSvUCIc
-TVBS,https://www.youtube.com/watch?v=mE9_pL6P2eE
+#TVBS,https://www.youtube.com/watch?v=mE9_pL6P2eE
 TVBS2台,https://www.youtube.com/watch?v=WAUECPu9EOw
 非凡新聞,https://www.youtube.com/watch?v=k_N4Vz0XfK4
 非凡新聞2,https://www.youtube.com/watch?v=wAUx3pywTt8
@@ -18,7 +18,7 @@ TVBS2台,https://www.youtube.com/watch?v=WAUECPu9EOw
 東森新聞2,https://www.youtube.com/watch?v=V1p33hqPrUk
 民視新聞,https://news-p-edge.cdn.hinet.net/FTV-N/index.m3u8
 民視新聞2,https://www.youtube.com/watch?v=ylYJSBUgaMA
-三立新聞,https://news-p-edge.cdn.hinet.net/SET-N/index.m3u8
+三立新聞,https://news-p-edge.cdn.hinet.net/SET-N/index.m3u8 #被吃掉
 三立新聞2,https://www.youtube.com/watch?v=oZdzzJID-vE
 三立新聞3,https://www.youtube.com/watch?v=QsGswQvRmtU
 三立iNEWS,https://www.youtube.com/watch?v=CKj7Bh4ss_k
@@ -153,6 +153,7 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 60東森購物,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
 
