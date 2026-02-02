@@ -5,27 +5,29 @@ SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 強制下載最新版，不使用快取
+# 1. 強力清洗讀檔：移除所有 Windows 換行符，確保 Linux 讀取順暢
 curl -L -k -s "$URL_LIST" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [啟動深度診斷模式...]"
+echo "🚀 [過濾器強化模式啟動...]"
 
 while read -r line; do
-    # 移除前後空白
-    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    # 移除行首行尾看不見的空白字元
+    line=$(echo "$line" | xargs echo -n 2>/dev/null || echo "$line")
     [ -z "$line" ] && continue
 
-    # 1. 強化版分組識別 (不論大小寫、不論前後是否有空格)
-    if echo "$line" | grep -qi "#EXTGRP"; then
-        echo "📍 發現分組標籤: $line"
+    # 2. 暴力保留分組：只要行內包含 #EXTGRP，不論位置，直接寫入
+    if echo "$line" | grep -q "#EXTGRP"; then
+        echo "📍 捕捉到分組: $line"
         echo "$line" >> "$DEST"
         continue
     fi
 
-    # 2. 提取網址與頻道名稱
-    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ]*")
+    # 3. 頻道解析邏輯
+    # 使用 grep 提取第一個符合 YouTube 格式的連結
+    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ,]*" | head -n 1)
+    # 名稱取第一個逗號前的文字
     NAME=$(echo "$line" | cut -d',' -f1)
 
     if [ -n "$LINK" ]; then
@@ -43,4 +45,4 @@ while read -r line; do
         fi
     fi
 done < "$SRC"
-echo "✨ 診斷完成。請檢查 /sdcard/Download/twTV.m3u"
+echo "✨ 處理完畢！請去檢查電視 App 的分組與清單數量。"
