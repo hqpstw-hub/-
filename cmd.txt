@@ -10,42 +10,44 @@ curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [全能解析器：分組標籤 + 萬用網址模式]"
+CURRENT_GRP="未分類"  # 預設分組
 
 while read -r line || [ -n "$line" ]; do
-    # 移除前後空白
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 簡易邏輯：只要行首是 # 且不含逗號，就是分組
+    # 2. 判定分組：行首為 # (例如 #新聞)
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
-        GRP_NAME=$(echo "$line" | tr -d '#')
-        echo "📍 捕捉分組: $GRP_NAME"
-        echo "#EXTGRP:$GRP_NAME" >> "$DEST"
+        CURRENT_GRP=$(echo "$line" | tr -d '#')
+        echo "📍 切換分組至: $CURRENT_GRP"
         continue
     fi
 
-    # 3. 頻道處理：提取名稱與萬用網址 (XXX://XX.XX/X)
+    # 3. 頻道處理
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        echo "📡 處理: $NAME"
+        echo "📡 處理: $NAME [$CURRENT_GRP]"
+        
+        # 準備寫入內容的標頭 (加入 group-title)
+        INF_LINE="#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME"
+
         if echo "$LINK" | grep -qi "youtube.com"; then
-            # YT 走解析
+            # YouTube 解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
             if [ -n "$REAL" ]; then
-                echo "#EXTINF:-1,$NAME" >> "$DEST"
+                echo "$INF_LINE" >> "$DEST"
                 echo "$REAL" >> "$DEST"
             else
-                echo "#EXTINF:-1,$NAME [YT解析失敗]" >> "$DEST"
+                echo "$INF_LINE [解析失敗]" >> "$DEST"
                 echo "http://0.0.0.0/failed" >> "$DEST"
             fi
         else
-            # 直連 (m3u8等) 直接輸出
-            echo "#EXTINF:-1,$NAME" >> "$DEST"
+            # 直連
+            echo "$INF_LINE" >> "$DEST"
             echo "$LINK" >> "$DEST"
         fi
     fi
 done < "$SRC"
-echo "✨ 成功！請檢查 Download/twTV.m3u"
+echo "✨ 完工！分組已注入 #EXTINF 標籤中。"
