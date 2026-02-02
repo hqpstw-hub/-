@@ -1,48 +1,70 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-# 設定路徑
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 下載最新清單 (加上時間戳破除快取)
-curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
+echo "--- 🛠️ 進入除錯模式 ---"
 
-# 2. 強制清洗格式：移除 Windows 換行符並確保編碼正確
+# 1. 下載並破除快取
+echo "📡 正在從 GitHub 抓取清單..."
+TIMESTAMP=$(date +%s)
+curl -L -k -v -s "${URL_LIST}?t=${TIMESTAMP}" -o "$SRC"
+
+echo "📊 下載完成，本地檔案大小: $(du -h $SRC | cut -f1)"
+echo "📝 檔案內容前 5 行預覽："
+head -n 5 "$SRC"
+echo "----------------------"
+
+# 2. 清洗格式
+echo "🧼 正在執行 sed 清洗 (移除 \r)..."
 sed -i 's/\r//g' "$SRC"
+TOTAL_LINES=$(wc -l < "$SRC")
+echo "📈 清洗後總行數: $TOTAL_LINES"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [啟動解析，目前清單行數: $(wc -l < $SRC)]"
 
+# 3. 逐行解析與判定
+COUNT=0
 while read -r line || [ -n "$line" ]; do
-    # 移除行首尾空白
-    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-    [ -z "$line" ] && continue
+    COUNT=$((COUNT+1))
+    
+    # 過濾空行
+    CLEAN_LINE=$(echo "$line" | tr -d '[:space:]')
+    if [ -z "$CLEAN_LINE" ]; then
+        continue
+    fi
 
-    # 3. 識別分組標籤 (#EXTGRP)
+    # 判定是否為分組
     if echo "$line" | grep -qi "#EXTGRP"; then
-        echo "📍 發現分組: $line"
+        echo "📍 [第 $COUNT 行] 判定為分組: $line"
         echo "$line" >> "$DEST"
         continue
     fi
 
-    # 4. 提取名稱與 YouTube 連結
+    # 判定是否為頻道
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ,]*")
 
     if [ -n "$LINK" ]; then
-        echo "📡 解析中: $NAME"
-        # 執行解析
+        echo "📡 [第 $COUNT 行] 判定為頻道: $NAME"
         REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
         
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1,$NAME" >> "$DEST"
             echo "$REAL" >> "$DEST"
+            echo "   ✅ 解析成功"
         else
             echo "#EXTINF:-1,$NAME [解析失敗]" >> "$DEST"
             echo "http://0.0.0.0/failed" >> "$DEST"
+            echo "   ❌ yt-dlp 抓不到網址"
         fi
+    else
+        echo "⚠️ [第 $COUNT 行] 無法識別的格式: $line"
     fi
 done < "$SRC"
-echo "✨ 任務完成！清單已輸出至 Download 資料夾。"
+
+echo "--- 🏁 除錯結束 ---"
+echo "最終輸出檔案: $DEST"
+echo "產生的 M3U 行數: $(wc -l < $DEST)"
