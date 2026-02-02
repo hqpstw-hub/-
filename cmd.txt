@@ -12,9 +12,11 @@ sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
 echo "--- 📋 失效清單 (記錄日期: $(date)) ---" > "$LOST"
-echo "🚀 [全能解析 + 源檢測模式啟動]"
+echo "🚀 [偽裝模式 + 源檢測啟動]"
 
 CURRENT_GRP="未分類"
+# 設定偽裝用的 UA (模仿電腦版 Chrome/VLC)
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
 while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -27,41 +29,44 @@ while read -r line || [ -n "$line" ]; do
         continue
     fi
 
-    # 3. 頻道解析與網址檢測
+    # 3. 頻道解析
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
         echo "📡 檢測中: $NAME"
         
-        # 判定是否為 YouTube 連結
         if echo "$LINK" | grep -qi "youtube.com"; then
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
         else
-            REAL="$LINK"
+            # 針對特定網域進行「偽裝標籤」注入
+            if echo "$LINK" | grep -qiE "iill.top|4gtv"; then
+                # 在網址後方加上 TiviMate 認得的 UA 屬性
+                REAL="${LINK}|User-Agent=${UA}"
+            else
+                REAL="$LINK"
+            fi
         fi
 
-        # --- 方案 A: 輕量化檢測邏輯 ---
+        # 4. 方案 A: 輕量化檢測與輸出
         if [ -n "$REAL" ]; then
-            # 測試連結是否連得通 (限時 2 秒，只取標頭)
-            # 如果是 YouTube 的 REAL 連結通常很長，我們測它的響應代碼
-            CHECK=$(curl -I -s -m 2 "$REAL" | grep -E "HTTP/.* 200|HTTP/.* 30[12]")
+            # 檢測時要拿掉偽裝標記才能測試
+            TEST_URL=$(echo "$REAL" | cut -d'|' -f1)
+            CHECK=$(curl -I -s -k -m 2 -A "$UA" "$TEST_URL" | grep -E "HTTP/.* 200|HTTP/.* 30[12]")
             
             if [ -n "$CHECK" ]; then
                 echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
                 echo "$REAL" >> "$DEST"
-                echo "   ✅ 通過"
+                echo "   ✅ 通過並已注入偽裝"
             else
-                echo "$NAME,$LINK (連線超時或失效)" >> "$LOST"
-                echo "   ❌ 失效 (已移至 lostlist)"
+                echo "$NAME,$LINK (連線超時)" >> "$LOST"
+                echo "   ❌ 失效"
             fi
         else
             echo "$NAME,$LINK (解析失敗)" >> "$LOST"
-            echo "   ❌ 解析失敗 (已移至 lostlist)"
+            echo "   ❌ 解析失敗"
         fi
     fi
 done < "$SRC"
 
-echo "✨ 完成！"
-echo "✅ 有效源: $DEST"
-echo "⚠️ 失效源: $LOST"
+echo "✨ 完成！偽裝已就緒。"
