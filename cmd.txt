@@ -1,19 +1,17 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-# --- 保留原設定路徑 ---
+# 設定路徑
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
-LOST='/sdcard/Download/lostlist.txt'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 下載與環境清理 (保留原始邏輯)
+# 1. 下載與環境清理
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "--- 📋 失效清單 (記錄日期: $(date)) ---" > "$LOST"
-echo "🚀 [超級偽裝模式：解析 + 檢測 + 標頭注入 (2.1.5 相容版)]"
+echo "🚀 [全頻道降維轉發模式：119 頻道全量注入]"
 
 CURRENT_GRP="未分類"
 UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -22,50 +20,39 @@ while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 分組識別 (保留原邏輯)
+    # 2. 分組識別
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
-        echo "📍 目前區域: $CURRENT_GRP"
+        echo "📍 處理區域: $CURRENT_GRP"
         continue
     fi
 
-    # 3. 頻道解析與偽裝 (降維轉發核心)
+    # 3. 頻道解析與偽裝路徑判定
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        echo "📡 檢測中: $NAME"
-        
         # --- 分流處理：注入全套標頭以相容 2.1.5 ---
         if echo "$LINK" | grep -qi "youtube.com"; then
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
         elif echo "$LINK" | grep -qiE "iill.top|4gtv"; then
-            # 這裡就是降維轉發：把 Headers 直接焊在網址後
             REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
         else
             REAL="$LINK"
         fi
 
-        # 4. 檢測與輸出 (保留原檢測邏輯)
+        # 4. 直接輸出 (不再檢測是否連通，確保數量達標)
         if [ -n "$REAL" ]; then
-            TEST_URL=$(echo "$REAL" | cut -d'|' -f1)
-            CHECK=$(curl -I -s -k -m 2 -A "$UA" "$TEST_URL" | grep -E "HTTP/.* 200|HTTP/.* 30[12]")
-            
-            if [ -n "$CHECK" ]; then
-                echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
-                echo "$REAL" >> "$DEST"
-                echo "   ✅ 通過並已注入偽裝"
-            else
-#原輸出LOST改成DEST不進行遺失清單
-                echo "$NAME,$LINK (連線超時或拒絕)" >> "$DEST"
-                echo "   ❌ 失效 (已記錄到 lostlist)"
-            fi
+            echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
+            echo "$REAL" >> "$DEST"
+            echo "   ✅ $NAME 已寫入"
         else
-            echo "$NAME,$LINK (解析失敗)" >> "$DEST"
-            echo "   ❌ 解析失敗"
+            # 解析失敗的保留原始連結，讓 TiviMate 自己嘗試
+            echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
+            echo "$LINK" >> "$DEST"
+            echo "   ⚠️ $NAME 解析失敗，輸出原始網址"
         fi
     fi
 done < "$SRC"
 
-echo "✨ 全部任務完成！"
-
+echo "✨ 全部 119 個頻道處理完成！"
