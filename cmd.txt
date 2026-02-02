@@ -1,74 +1,74 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
+# 設定路徑
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 LOST='/sdcard/Download/lostlist.txt'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 下載與清洗
+# 1. 下載與環境清理
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
 echo "--- 📋 失效清單 (記錄日期: $(date)) ---" > "$LOST"
-echo "🚀 [偽裝模式 + 源檢測啟動]"
+echo "🚀 [超級偽裝模式啟動：解析 + 檢測 + 標頭注入]"
 
 CURRENT_GRP="未分類"
-# 設定偽裝用的 UA (模仿電腦版 Chrome/VLC)
-UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+# 設定偽裝用的 UA (模仿電腦版 Chrome)
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 while read -r line || [ -n "$line" ]; do
+    # 移除前後空白
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 分組識別
+    # 2. 分組識別 (邏輯：行首為 #)
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
         echo "📍 目前區域: $CURRENT_GRP"
         continue
     fi
 
-    # 3. 頻道解析
+    # 3. 頻道解析與偽裝路徑判定
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
         echo "📡 檢測中: $NAME"
         
+        # --- 分流處理開始 ---
         if echo "$LINK" | grep -qi "youtube.com"; then
+            # A. YouTube：執行解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
+        elif echo "$LINK" | grep -qiE "iill.top|4gtv"; then
+            # B. 特殊源：注入 VLC 全套偽裝標頭 (UA + Referer + Origin)
+            # 使用 | 符號連接，這是 TiviMate/VLC 識別標頭的標準做法
+            REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
         else
-            # 針對特定網域進行「偽裝標籤」注入
-            if echo "$LINK" | grep -qiE "iill.top|4gtv"; then
-                # 在網址後方加上 TiviMate 認得的 UA 屬性
-                REAL="${LINK}|User-Agent=${UA}"
-            else
-                REAL="$LINK"
-            fi
+            # C. 一般網址：直接使用
+            REAL="$LINK"
         fi
-        # 針對 iill.top 的超級偽裝
-      if echo "$LINK" | grep -qiE "iill.top|4gtv"; then
-          # 同時注入 UA, Referer 和 Origin，這幾乎是 VLC 的全套裝備
-          REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
-      else
-          REAL="$LINK"
-      fi
-
+        # --- 分流處理結束 ---
 
         # 4. 方案 A: 輕量化檢測與輸出
         if [ -n "$REAL" ]; then
-            # 檢測時要拿掉偽裝標記才能測試
+            # 檢測連通性時，必須拿掉管道符號 (|) 後面的偽裝標記，否則 curl 會報錯
             TEST_URL=$(echo "$REAL" | cut -d'|' -f1)
+            
+            # 使用模擬 UA 進行 2 秒探路 (-k 跳過憑證檢查)
             CHECK=$(curl -I -s -k -m 2 -A "$UA" "$TEST_URL" | grep -E "HTTP/.* 200|HTTP/.* 30[12]")
             
             if [ -n "$CHECK" ]; then
+                # 寫入 M3U：注入分組標籤
                 echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
                 echo "$REAL" >> "$DEST"
                 echo "   ✅ 通過並已注入偽裝"
             else
-                echo "$NAME,$LINK (連線超時)" >> "$LOST"
-                echo "   ❌ 失效"
+                # 記錄到失效清單
+                echo "$NAME,$LINK (連線超時或拒絕)" >> "$LOST"
+                echo "   ❌ 失效 (已記錄到 lostlist)"
             fi
         else
             echo "$NAME,$LINK (解析失敗)" >> "$LOST"
@@ -77,5 +77,6 @@ while read -r line || [ -n "$line" ]; do
     fi
 done < "$SRC"
 
-echo "✨ 完成！偽裝已就緒。"
-
+echo "✨ 全部任務完成！"
+echo "✅ 有效源：$DEST"
+echo "⚠️ 失效源：$LOST"
