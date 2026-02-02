@@ -5,66 +5,58 @@ SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-echo "--- 🛠️ 進入除錯模式 ---"
+echo "--- 🛠️ 萬用格式除錯模式 ---"
 
-# 1. 下載並破除快取
-echo "📡 正在從 GitHub 抓取清單..."
-TIMESTAMP=$(date +%s)
-curl -L -k -v -s "${URL_LIST}?t=${TIMESTAMP}" -o "$SRC"
-
-echo "📊 下載完成，本地檔案大小: $(du -h $SRC | cut -f1)"
-echo "📝 檔案內容前 5 行預覽："
-head -n 5 "$SRC"
-echo "----------------------"
-
-# 2. 清洗格式
-echo "🧼 正在執行 sed 清洗 (移除 \r)..."
+# 1. 下載與清洗
+curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
-TOTAL_LINES=$(wc -l < "$SRC")
-echo "📈 清洗後總行數: $TOTAL_LINES"
+echo "📈 讀取總行數: $(wc -l < "$SRC")"
 
 echo "#EXTM3U" > "$DEST"
 
-# 3. 逐行解析與判定
-COUNT=0
 while read -r line || [ -n "$line" ]; do
-    COUNT=$((COUNT+1))
-    
-    # 過濾空行
-    CLEAN_LINE=$(echo "$line" | tr -d '[:space:]')
-    if [ -z "$CLEAN_LINE" ]; then
+    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    [ -z "$line" ] && continue
+
+    # A. 判斷分組：包含 #EXTGRP 或 [文字] 格式
+    if echo "$line" | grep -qi "#EXTGRP" || echo "$line" | grep -q "^\[.*\]$"; then
+        echo "📍 捕捉分組: $line"
+        # 如果是 [新聞] 格式，轉換成標準 #EXTGRP 格式以利播放器識別
+        CLEAN_GRP=$(echo "$line" | tr -d '[]')
+        echo "#EXTGRP:$CLEAN_GRP" >> "$DEST"
         continue
     fi
 
-    # 判定是否為分組
-    if echo "$line" | grep -qi "#EXTGRP"; then
-        echo "📍 [第 $COUNT 行] 判定為分組: $line"
-        echo "$line" >> "$DEST"
-        continue
-    fi
-
-    # 判定是否為頻道
+    # B. 萬用網址提取邏輯 (符合 XXX://XX.XX/X 結構)
+    # 此正則確保有協定、有網域點、有後續路徑
+    LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
     NAME=$(echo "$line" | cut -d',' -f1)
-    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ,]*")
 
     if [ -n "$LINK" ]; then
-        echo "📡 [第 $COUNT 行] 判定為頻道: $NAME"
-        REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
+        echo "📡 處理頻道: $NAME"
         
-        if [ -n "$REAL" ]; then
-            echo "#EXTINF:-1,$NAME" >> "$DEST"
-            echo "$REAL" >> "$DEST"
-            echo "   ✅ 解析成功"
+        if echo "$LINK" | grep -qi "youtube.com"; then
+            # YouTube 走解析流程
+            REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
+            if [ -n "$REAL" ]; then
+                echo "#EXTINF:-1,$NAME" >> "$DEST"
+                echo "$REAL" >> "$DEST"
+                echo "   ✅ YT 解析成功"
+            else
+                echo "#EXTINF:-1,$NAME [YT解析失敗]" >> "$DEST"
+                echo "http://0.0.0.0/failed" >> "$DEST"
+                echo "   ❌ YT 解析失敗"
+            fi
         else
-            echo "#EXTINF:-1,$NAME [解析失敗]" >> "$DEST"
-            echo "http://0.0.0.0/failed" >> "$DEST"
-            echo "   ❌ yt-dlp 抓不到網址"
+            # 非 YouTube (如 .m3u8) 直接寫入，不需解析
+            echo "#EXTINF:-1,$NAME" >> "$DEST"
+            echo "$LINK" >> "$DEST"
+            echo "   🔗 直連網址已加入"
         fi
     else
-        echo "⚠️ [第 $COUNT 行] 無法識別的格式: $line"
+        echo "⚠️ 無法識別: $line"
     fi
 done < "$SRC"
 
-echo "--- 🏁 除錯結束 ---"
-echo "最終輸出檔案: $DEST"
-echo "產生的 M3U 行數: $(wc -l < $DEST)"
+echo "--- 🏁 任務完成 ---"
+echo "產生的 M3U 總行數: $(wc -l < $DEST)"
