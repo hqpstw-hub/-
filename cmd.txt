@@ -5,44 +5,40 @@ SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 強力清洗讀檔：移除所有 Windows 換行符，確保 Linux 讀取順暢
-curl -L -k -s "$URL_LIST" -o "$SRC"
+# 1. 強制下載最新清單 (加入隨機參數破除快取)
+curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
+# 2. 雙重清洗：移除 Windows 換行符並處理編碼
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [過濾器強化模式啟動...]"
+echo "🚀 [深度解析啟動，目前清單行數: $(wc -l < $SRC)]"
 
-while read -r line; do
-    # 移除行首行尾看不見的空白字元
-    line=$(echo "$line" | xargs echo -n 2>/dev/null || echo "$line")
+while read -r line || [ -n "$line" ]; do
+    # 移除行首尾空白
+    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 暴力保留分組：只要行內包含 #EXTGRP，不論位置，直接寫入
-    if echo "$line" | grep -q "#EXTGRP"; then
-        echo "📍 捕捉到分組: $line"
+    # 3. 只要包含 #EXTGRP 就原樣寫入 (不論有沒有冒號)
+    if echo "$line" | grep -qi "#EXTGRP"; then
+        echo "📍 捕捉分組: $line"
         echo "$line" >> "$DEST"
         continue
     fi
 
-    # 3. 頻道解析邏輯
-    # 使用 grep 提取第一個符合 YouTube 格式的連結
-    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ,]*" | head -n 1)
-    # 名稱取第一個逗號前的文字
+    # 4. 提取頻道名與網址
     NAME=$(echo "$line" | cut -d',' -f1)
+    LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ,]*")
 
     if [ -n "$LINK" ]; then
-        echo "📡 正在解析: $NAME"
+        echo "📡 解析: $NAME"
         REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
-        
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1,$NAME" >> "$DEST"
             echo "$REAL" >> "$DEST"
-            echo "   ✅ 成功"
         else
             echo "#EXTINF:-1,$NAME [解析失敗]" >> "$DEST"
             echo "http://0.0.0.0/failed" >> "$DEST"
-            echo "   ❌ 失敗"
         fi
     fi
 done < "$SRC"
-echo "✨ 處理完畢！請去檢查電視 App 的分組與清單數量。"
+echo "✨ 完成！輸出路徑: $DEST"
