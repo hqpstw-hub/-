@@ -5,32 +5,31 @@ SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 下載清單並強制移除 Windows 換行符
+# 強制下載最新版，不使用快取
 curl -L -k -s "$URL_LIST" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [全功能智能解析模式啟動...]"
+echo "🚀 [啟動深度診斷模式...]"
 
 while read -r line; do
-    # 1. 優化：徹底過濾掉只包含空白的行，防止腳本卡死
-    CLEAN_LINE=$(echo "$line" | tr -d '[:space:]')
-    [ -z "$CLEAN_LINE" ] && continue
+    # 移除前後空白
+    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    [ -z "$line" ] && continue
 
-    # 2. 優化：保留分組標籤（確保 #EXTGRP 不會被當成頻道解析）
-    if echo "$line" | grep -q "#EXTGRP"; then
+    # 1. 強化版分組識別 (不論大小寫、不論前後是否有空格)
+    if echo "$line" | grep -qi "#EXTGRP"; then
+        echo "📍 發現分組標籤: $line"
         echo "$line" >> "$DEST"
         continue
     fi
 
-    # 3. 提取網址與頻道名稱
+    # 2. 提取網址與頻道名稱
     LINK=$(echo "$line" | grep -o "https://www.youtube.com/[^ ]*")
     NAME=$(echo "$line" | cut -d',' -f1)
 
     if [ -n "$LINK" ]; then
         echo "📡 正在解析: $NAME"
-        
-        # 加上 Cookies 支援與解析
         REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
         
         if [ -n "$REAL" ]; then
@@ -38,11 +37,10 @@ while read -r line; do
             echo "$REAL" >> "$DEST"
             echo "   ✅ 成功"
         else
-            # 4. 記錄失敗清單 (保留分組結構)
             echo "#EXTINF:-1,$NAME [解析失敗]" >> "$DEST"
             echo "http://0.0.0.0/failed" >> "$DEST"
             echo "   ❌ 失敗"
         fi
     fi
 done < "$SRC"
-echo "✨ 任務完成！分組已保留，格式已兼容，Cookies 解析完畢。"
+echo "✨ 診斷完成。請檢查 /sdcard/Download/twTV.m3u"
