@@ -1,36 +1,32 @@
-name: 4GTV Auto Parser
+name: 4GTV_Update
 on:
   schedule:
-    - cron: '0 */4 * * *' # 每 4 小時自動跑一次
-  workflow_dispatch:      # 也可以手動按按鈕執行
+    - cron: '0 */4 * * *' # 每 4 小時跑一次
+  workflow_dispatch:      # 允許手動點擊執行
 
 jobs:
-  build:
+  update_list:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: 檢出代碼
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 安裝 Python 與環境
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: 安裝解析工具
         run: |
-          pip install yt-dlp
+          pip install yt-dlp requests
 
-      - name: Parse 4GTV and YouTube
-        run: |
-          # 這裡跑原本在盒子上的解析邏輯，但用的是 GitHub 的強大性能
-          # 假設你的原始清單叫 raw_list.txt，產出叫 cloud_tv.m3u
-          # (具體解析腳本我等下幫你寫成一個單獨的 python 檔)
-          python3 parser.py
+      - name: 執行解析
+        run: python parser.py
 
-      - name: Commit and Push
+      - name: 推送回倉庫
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add cloud_tv.m3u
-          git commit -m "Update TV List" || exit 0
+          git commit -m "自動更新電視清單: $(date)" || exit 0
           git push
