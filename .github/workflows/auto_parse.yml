@@ -1,5 +1,7 @@
 name: TV_Update
 on:
+  schedule:
+  - cron: '0 */4 * * *' # 每 4 小時跑一次
   workflow_dispatch:      # 允許手動點擊執行
 jobs:
   update_list:
