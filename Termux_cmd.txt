@@ -1,9 +1,12 @@
 cat << 'EOF' > ~/run_tv.sh
-#!/bin/bash
-# 只做一件事：抓取雲端指令並執行
-curl -s -L "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt" | bash
-# 啟動 TiviMate
-su -c 'am start -n ar.tvplayer.tv/ar.tvplayer.tv.ui.main.MainActivity'
-EOF
-chmod +x ~/run_tv.sh
+#!/data/data/com.termux/files/usr/bin/bash
+export PATH=$PATH:/data/data/com.termux/files/usr/bin
 
+# 1. 下載雲端指令並「即時洗滌」：用 tr -d '\r' 刪掉 Windows 換行符
+CMD_URL="https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt"
+
+echo "📡 正在從雲端同步指令並洗滌格式..."
+curl -s -L "$CMD_URL" | tr -d '\r' | bash
+EOF
+
+chmod +x ~/run_tv.sh
