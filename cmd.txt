@@ -5,22 +5,24 @@ URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlis
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
+UA="VLC/3.0.12"
 
 # 1. 抓取最新清單
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
+# 強制修復換行符號，避免 $'\r' 報錯
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [全頻道注入模式：正在處理 4GTV 與 YouTube 雙核心解析]"
+echo "🚀 [核心解析啟動]"
 
 CURRENT_GRP="未分類"
-UA="VLC/3.0.12"
 
 # 2. 開始逐行掃描
 while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
+    # 判斷分組
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
         echo "📍 目前分組: $CURRENT_GRP"
@@ -31,27 +33,27 @@ while read -r line || [ -n "$line" ]; do
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        # --- 核心邏輯修正 ---
-
-        # A. YouTube：維持原樣解析
+        REAL=""
+        
+        # --- 核心邏輯區塊 ---
         if echo "$LINK" | grep -qi "youtube.com"; then
+            # A. YouTube 解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f "best" "$LINK" 2>/dev/null)
-            
-        # B. 4GTV 網頁連結：如果連結含 "channel"，叫 yt-dlp 抓直連；若已是 m3u8 則加標頭
+        
         elif echo "$LINK" | grep -qi "4gtv"; then
+            # B. 4GTV 處理
             if echo "$LINK" | grep -qi "channel"; then
-                # 解析網頁型連結
                 REAL=$(python3 -m yt_dlp -g "$LINK" 2>/dev/null)
             else
-                # 處理已知的 M3U8 直連並注入標頭 (2024 方案)
                 REAL="${LINK}|User-Agent=${UA}&Referer=https://www.4gtv.tv/&Origin=https://www.4gtv.tv"
             fi
             
-        # C. iill.top 等其他平台：維持標頭注入
         elif echo "$LINK" | grep -qi "iill.top"; then
+            # C. 其他平台標頭注入
             REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
             
         else
+            # D. 預設直連
             REAL="$LINK"
         fi
 
@@ -61,9 +63,10 @@ while read -r line || [ -n "$line" ]; do
             echo "$REAL" >> "$DEST"
             echo "   ✅ $NAME 成功寫入"
         else
+            # 如果解析失敗，至少保留原始連結，不讓清單斷掉
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$LINK" >> "$DEST"
-            echo "   ⚠️ $NAME 解析失敗，回退至原始網址"
+            echo "   ⚠️ $NAME 解析失敗，保留原始網址"
         fi
     fi
 done < "$SRC"
