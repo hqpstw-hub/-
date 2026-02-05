@@ -1,10 +1,11 @@
-# --- Termux 內部一鍵更新與啟動指令 ---
+cat << 'EOF' > ~/tv/run_tv.sh
+#!/bin/bash
+# 1. 抓取原始清單 (twTVlist.txt)
+curl -L "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt" > ~/tv/raw_list.txt
 
-# 1. 重新抓取腳本並強制轉為 Linux 格式 (防止格式跑掉)
-curl -L -k -s "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt" -o ~/tv && sed -i 's/\r//g' ~/tv && chmod +x ~/tv
+# 2. 抓取指令腳本 (cmd.txt)，先過濾掉 Windows 換行符號 (\r)，再交給 bash 執行
+curl -L "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt" | sed 's/\r//g' | bash
 
-# 2. 執行腳本 (使用 sh 直接呼叫最穩定)
-sh ~/tv
-
-# 3. 檢查 Cron 守衛狀態 (確保兩天後的自動更新有效)
-pgrep crond && echo "✅ 守衛在線" || (crond && echo "⚠️ 守衛重啟中")
+# 3. 提示完成
+echo "--- 雲端指令執行完畢 ---"
+EOF
