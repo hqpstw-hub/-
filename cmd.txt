@@ -5,15 +5,14 @@ URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlis
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
 DEST='/sdcard/Download/twTV.m3u'
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
-UA="VLC/3.0.12"
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 # 1. 抓取最新清單
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
-# 強制修復換行符號，避免 $'\r' 報錯
 sed -i 's/\r//g' "$SRC"
 
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [核心解析啟動]"
+echo "🚀 [核心解析啟動：4GTV 已切換至標頭注入模式]"
 
 CURRENT_GRP="未分類"
 
@@ -22,7 +21,6 @@ while read -r line || [ -n "$line" ]; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 判斷分組
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
         echo "📍 目前分組: $CURRENT_GRP"
@@ -37,16 +35,13 @@ while read -r line || [ -n "$line" ]; do
         
         # --- 核心邏輯區塊 ---
         if echo "$LINK" | grep -qi "youtube.com"; then
-            # A. YouTube 解析
+            # A. YouTube：依然使用 yt-dlp 解析
             REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f "best" "$LINK" 2>/dev/null)
         
         elif echo "$LINK" | grep -qi "4gtv"; then
-            # B. 4GTV 處理
-            if echo "$LINK" | grep -qi "channel"; then
-                REAL=$(python3 -m yt_dlp -g "$LINK" 2>/dev/null)
-            else
-                REAL=$(python3 -m yt_dlp --user-agent "$UA" --referer "https://www.4gtv.tv/" -g "$LINK" 2>/dev/null)
-            fi
+            # B. 4GTV：棄用解析，直接注入標頭 (TiviMate 專用格式)
+            # 這樣不用等解析，開台速度最快
+            REAL="${LINK}|User-Agent=${UA}&Referer=https://www.4gtv.tv/"
             
         elif echo "$LINK" | grep -qi "iill.top"; then
             # C. 其他平台標頭注入
@@ -61,9 +56,8 @@ while read -r line || [ -n "$line" ]; do
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$REAL" >> "$DEST"
-            echo "   ✅ $NAME 成功寫入"
+            echo "   ✅ $NAME 處理成功"
         else
-            # 如果解析失敗，至少保留原始連結，不讓清單斷掉
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$LINK" >> "$DEST"
             echo "   ⚠️ $NAME 解析失敗，保留原始網址"
@@ -72,4 +66,3 @@ while read -r line || [ -n "$line" ]; do
 done < "$SRC"
 
 echo "✨ 任務完成！"
-
