@@ -1,8 +1,9 @@
 cat << 'EOF' > ~/run_tv.sh
 #!/bin/bash
 # 只做一件事：抓取雲端指令並執行
-curl -s -L "https://raw.githubusercontent.com/你的帳號/你的倉庫/main/cmd.txt" | bash
+curl -s -L "https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/cmd.txt" | bash
 # 啟動 TiviMate
 su -c 'am start -n ar.tvplayer.tv/ar.tvplayer.tv.ui.main.MainActivity'
 EOF
 chmod +x ~/run_tv.sh
+
