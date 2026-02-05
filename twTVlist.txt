@@ -27,6 +27,58 @@ TVBS-t,https://www.youtube.com/watch?v=WAUECPu9EOw
 運通財經台,https://www.youtube.com/watch?v=6u3fNhDKT6Q
 鳳凰衛視,https://www.youtube.com/watch?v=fN9uYWCjQaw
 
+#線上電視
+靖天綜合台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=21
+靖天日本台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=22
+KLT-靖天國際台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=84
+Nice TV 靖天歡樂台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=119
+靖天資訊台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=88
+韓國娛樂台 KMTV,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=446
+民視旅遊台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=61
+亞洲旅遊台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=250
+幸福空間居家台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=168
+愛爾達生活旅遊台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=237
+ROCK Xstream搖滾極限頻道,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=485
+公視戲劇,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=7
+民視影劇台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=24
+靖天戲劇台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=116
+靖洋戲劇台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=118
+GagaOOLala 精選LGBTQ+好,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=478
+靖天映畫,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=42
+靖天電影台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=82
+amc電影台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=39
+My Cinema Europe HD 我的歐洲電影,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=463
+TVBS綜藝台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=476
+TVBS台劇台,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=477
+精選華語電影,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=335
+台灣靈異事件,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=326
+國外電影精選,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=414
+日韓電影大賞,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=415
+恐怖電影,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=422
+古裝武俠劇,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=423
+精彩陸劇,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=426
+007情報員,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=439
+WTO姐妹會,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=350
+威廉沈歡樂送,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=435
+全家有智慧,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=375
+姊妹亮起來,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=377
+娛樂百分百,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=378
+超級冰冰Show,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=379
+全能歌手,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=385
+鬥陣大廟埕,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=388
+健康2.0,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=391
+TVBS看板人物,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=394
+日韓綜藝,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=395
+綜藝新時代,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=429
+幸福保衛戰,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=430
+同學！搞什麼鬼,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=431
+爸媽囧很大,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=432
+醫學大聯盟,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=433
+GoGoTaiwan,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=434
+一起追韓星,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=447
+韓流美食料理秀,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=449
+綜藝大贏家,https://www.4gtv.tv/channel/4gtv-4gtv046?set=4&ch=460
+
 #綜藝
 綜藝玩很大,https://www.youtube.com/watch?v=uehKhWmttVE
 天才衝衝衝,https://www.youtube.com/watch?v=0ePhPlTJbGo
@@ -62,7 +114,6 @@ TVBS亞洲2,http://38.64.72.148:80/hls/modn/list/4005/chunklist0.m3u8
 三國2010,https://www.youtube.com/watch?v=TH38fgjHtWQ
 三國演義1994,https://www.youtube.com/watch?v=XNO0vjTNhzo
 三生三世十里桃花,https://www.youtube.com/watch?v=yUkO-BXnUjQ
-知否知否應是綠肥紅瘦,https://www.youtube.com/watch?v=Kalt-NQXFMU
 香蜜沉沉燼如霜,https://www.youtube.com/watch?v=sEeB5deB2MQ
 九重紫,https://www.youtube.com/watch?v=ESCvRS78MBk
 康熙王朝,https://www.youtube.com/watch?v=mys-14vFlFI
@@ -83,8 +134,7 @@ HISTORY頻道,http://37.27.111.214:8080/live/27/hls.m3u8
 非凡大探索 台北美食,https://www.youtube.com/watch?v=HtUVepidg7c
 非凡大探索 台中美食,https://www.youtube.com/watch?v=EZ8GQ8hH6GI
 非凡大探索 高雄美食,https://www.youtube.com/watch?v=Qx-PTaNRC7Y
-大陸尋奇,https://www.youtube.com/watch?v=KgcJZ_Is_h4
-[HD]momo综合,rtmp://f13h.mine.nu/sat/tv761
+0[HD]momo综合,rtmp://f13h.mine.nu/sat/tv761
 
 #體育
 緯來體育,rtmp://f13h.mine.nu:1935/sat/tv721
@@ -98,6 +148,7 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 東森購物5台,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
 
