@@ -1,19 +1,27 @@
+# 確保環境路徑
+export PATH=$PATH:/data/data/com.termux/files/usr/bin
+
 # 雲端 cmd.txt 內容
 # 1. 下載格式化後的清單
-curl -s -L "https://raw.githubusercontent.com/你的帳號/你的倉庫/main/cloud_tv.m3u" > /sdcard/Download/tw_raw.m3u
+curl -s -L "https://raw.githubusercontent.com/hqpstw-hub/你的倉庫/-/cloud_tv.m3u" > /sdcard/Download/tw_raw.m3u
 
-# 2. 本地解析 YouTube 專用邏輯
+# 2. 本地解析 YouTube
 echo "#EXTM3U" > /sdcard/Download/twTV.m3u
-while IFS= read -r line; do
-    if [[ "$line" == *"youtube.com"* || "$line" == *"youtu.be"* ]]; then
-        # 提取 URL
-        URL=$(echo "$line" | grep -o "https://[^ ]*")
-        # 本地解析
-        REAL=$(yt-dlp -g -f "best" "$URL" 2>/dev/null)
-        [ ! -z "$REAL" ] && echo "$REAL" >> /sdcard/Download/twTV.m3u || echo "$line" >> /sdcard/Download/twTV.m3u
-    else
-        echo "$line" >> /sdcard/Download/twTV.m3u
-    fi
+while read -r line; do
+    case "$line" in
+        *youtube.com*|*youtu.be*)
+            URL=$(echo "$line" | grep -o "https://[^ ]*")
+            REAL=$(yt-dlp -g -f "best" "$URL" 2>/dev/null)
+            if [ -n "$REAL" ]; then
+                echo "$REAL" >> /sdcard/Download/twTV.m3u
+            else
+                echo "$line" >> /sdcard/Download/twTV.m3u
+            fi
+            ;;
+        *)
+            echo "$line" >> /sdcard/Download/twTV.m3u
+            ;;
+    esac
 done < /sdcard/Download/tw_raw.m3u
 
-echo "✅ 雲端指令執行完畢，本地清單已更新。"
+echo "✅ 雲端指令執行完畢，本地清單已刷新。"
