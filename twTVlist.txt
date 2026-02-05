@@ -1,5 +1,5 @@
 #新聞 
-中天新聞,https://www.youtube.com/watch?v=FYKaMV-xcjo
+中天新聞,https://t.freetv.fun/live/zhong-tian-xin-wen-2.m3u8
 中天新聞2,https://www.youtube.com/watch?v=vr3XyVCR4T0
 中天政論頻道,https://www.youtube.com/watch?v=-Bk_tdwVDPQ
 中視新聞,https://www.youtube.com/watch?v=baDV1O5EBP0
@@ -49,6 +49,8 @@ TVBS亞洲2,http://38.64.72.148:80/hls/modn/list/4005/chunklist0.m3u8
 
 #戲劇
 終極系列,https://www.youtube.com/watch?v=HKDuzWlyGts
+親戚不計較,https://www.youtube.com/watch?v=GjXBXz5dl6E
+光陰的故事,https://www.youtube.com/watch?v=Me6zMjJdzhk
 
 #陸戲劇
 超視34.5,http://38.64.72.148:80/hls/modn/list/2013/chunklist1.m3u8
@@ -66,22 +68,29 @@ TVBS亞洲2,http://38.64.72.148:80/hls/modn/list/4005/chunklist0.m3u8
 康熙王朝,https://www.youtube.com/watch?v=mys-14vFlFI
 雍正王朝,https://www.youtube.com/watch?v=U2P2LPv2Df8
 神鵰俠侶2014,https://www.youtube.com/watch?v=OyTd6lXP32Y
+倚天屠龍記,https://www.youtube.com/watch?v=7syefcmbpFE
 去有風的地方,https://www.youtube.com/watch?v=eHe-Sf016R0
 光芒,https://www.youtube.com/watch?v=Wsz2YuQ422g
+神探狄人傑,https://www.youtube.com/watch?v=xnxJYL4hxhk
+都挺好,https://www.youtube.com/watch?v=uPLdwjHlf58
 
 #電影
 HISTORY頻道,http://37.27.111.214:8080/live/27/hls.m3u8
+[HD]東森洋片,https://t.freetv.fun/live/dong-sen-yang-pian-2.m3u8
+周星驰电影,http://www.douzhicloud.site:35455/huya/11342412
 
 #美食
 非凡大探索 台北美食,https://www.youtube.com/watch?v=HtUVepidg7c
 非凡大探索 台中美食,https://www.youtube.com/watch?v=EZ8GQ8hH6GI
 非凡大探索 高雄美食,https://www.youtube.com/watch?v=Qx-PTaNRC7Y
 大陸尋奇,https://www.youtube.com/watch?v=KgcJZ_Is_h4
+[HD]momo综合,rtmp://f13h.mine.nu/sat/tv761
 
 #體育
 緯來體育,rtmp://f13h.mine.nu:1935/sat/tv721
 
 #購物台
+momo購物一台,https://www.youtube.com/watch?v=_pZQ1Lk0xMA
 momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 東森購物1台,https://www.youtube.com/watch?v=ViJ3XiN6Q3M
 東森購物2台,https://www.youtube.com/watch?v=_Vlzn9qAHD4
@@ -89,6 +98,7 @@ momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
 東森購物5台,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
 
