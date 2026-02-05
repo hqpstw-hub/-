@@ -46,12 +46,6 @@ TVBS亞洲2,http://38.64.72.148:80/hls/modn/list/4005/chunklist0.m3u8
 緯來精采,http://61.221.215.25:8800/hls/48/index.m3u8
 緯來育樂,rtmp://f13h.mine.nu:1935/sat/tv701
 緯來育樂HD,rtmp://f13h.mine.nu/sat/tv701
-東森綜合,https://stream1.freetv.fun/8140559a5d4385739699c12accb202af6011bbff486d4ceb42f8391a127ad212.ctv
-
-#自然
-BBC-Earth,https://hls.iill.top/api/BBC-Earth/playlist.m3u8
-BBC-Lifestyle,https://hls.iill.top/api/BBC-Lifestyle/playlist.m3u8
-Discovery,https://hls.iill.top/api/Discovery/playlist.m3u8
 
 #戲劇
 終極系列,https://www.youtube.com/watch?v=HKDuzWlyGts
@@ -77,8 +71,6 @@ Discovery,https://hls.iill.top/api/Discovery/playlist.m3u8
 
 #電影
 HISTORY頻道,http://37.27.111.214:8080/live/27/hls.m3u8
-緯來電影1,https://stream1.freetv.fun/01d83e1a7d4a7a6f1a032892d73866ff7ce398f201466ecd0a86beb08a4857e8.ctv
-美亞電影,https://stream1.freetv.fun/12e25aeffeee85d6fe045a3f3edb6f0cf25782b51d9d2708ea5d9c0fc9bdf0db.ctv
 
 #美食
 非凡大探索 台北美食,https://www.youtube.com/watch?v=HtUVepidg7c
@@ -91,12 +83,13 @@ HISTORY頻道,http://37.27.111.214:8080/live/27/hls.m3u8
 
 #購物台
 momo購物二台,https://www.youtube.com/watch?v=xbNWkUyxQGM
-34東森購物,https://www.youtube.com/watch?v=_Vlzn9qAHD4
-46東森購物,https://www.youtube.com/watch?v=Z50JFuNgvB0
-47東森購物,https://www.youtube.com/watch?v=ViJ3XiN6Q3M
-60東森購物,https://www.youtube.com/watch?v=u0NYyH3ZesE
+東森購物1台,https://www.youtube.com/watch?v=ViJ3XiN6Q3M
+東森購物2台,https://www.youtube.com/watch?v=_Vlzn9qAHD4
+東森購物3台,https://www.youtube.com/watch?v=Z50JFuNgvB0
+東森購物5台,https://www.youtube.com/watch?v=u0NYyH3ZesE
 ViVa TV 美好購物1台,https://www.youtube.com/watch?v=7IyxOiGMLgw
 ViVa TV 美好購物2台,https://www.youtube.com/watch?v=lEXITHxcagI
+
 
 
 
