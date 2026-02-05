@@ -1,67 +1,66 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
 # --- 環境變數設定 ---
-# 遠端 GitHub 頻道清單
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
-# Termux 本地暫存路徑
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
-# 最終輸出的 m3u 檔案位置 (供 TiviMate 或 VLC 讀取)
 DEST='/sdcard/Download/twTV.m3u'
-# YouTube 登入憑證 (用於解析受限影片)
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 抓取最新清單並清理斷行符號
-# 使用時間戳 ?t= 確保不被 GitHub 緩存影響
+# 1. 抓取最新清單
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
-# 初始化 m3u 檔案
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [全頻道注入模式：正在同步雲端清單至本地儲存]"
+echo "🚀 [全頻道注入模式：正在處理 4GTV 與 YouTube 雙核心解析]"
 
 CURRENT_GRP="未分類"
 UA="VLC/3.0.12"
 
-# 2. 開始逐行掃描清單
+# 2. 開始逐行掃描
 while read -r line || [ -n "$line" ]; do
-    # 去除前後空白
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 識別分組 (以 # 開頭的行)
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
         echo "📍 目前分組: $CURRENT_GRP"
         continue
     fi
 
-    # 頻道解析：分割名稱與連結
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        # --- 核心邏輯：針對不同來源進行標頭注入或動態解析 ---
-        
-        # A. YouTube 來源：調用 yt-dlp 獲取直連 (格式選取最佳視訊)
+        # --- 核心邏輯修正 ---
+
+        # A. YouTube：維持原樣解析
         if echo "$LINK" | grep -qi "youtube.com"; then
-            REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f "best[ext=mp4]/best" "$LINK" 2>/dev/null)
+            REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f "best" "$LINK" 2>/dev/null)
             
-        # B. 特定平台：注入 User-Agent 與 Referer 繞過驗證
-        elif echo "$LINK" | grep -qiE "iill.top|4gtv"; then
+        # B. 4GTV 網頁連結：如果連結含 "channel"，叫 yt-dlp 抓直連；若已是 m3u8 則加標頭
+        elif echo "$LINK" | grep -qi "4gtv"; then
+            if echo "$LINK" | grep -qi "channel"; then
+                # 解析網頁型連結
+                REAL=$(python3 -m yt_dlp -g "$LINK" 2>/dev/null)
+            else
+                # 處理已知的 M3U8 直連並注入標頭 (2024 方案)
+                REAL="${LINK}|User-Agent=${UA}&Referer=https://www.4gtv.tv/&Origin=https://www.4gtv.tv"
+            fi
+            
+        # C. iill.top 等其他平台：維持標頭注入
+        elif echo "$LINK" | grep -qi "iill.top"; then
             REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
             
-        # C. 一般來源：直接透傳
         else
             REAL="$LINK"
         fi
 
-        # 3. 寫入本地 m3u 檔案
+        # 3. 寫入檔案
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$REAL" >> "$DEST"
             echo "   ✅ $NAME 成功寫入"
         else
-            # 若解析失敗 (如 YouTube 網址失效)，保留原始連結讓播放器自救
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$LINK" >> "$DEST"
             echo "   ⚠️ $NAME 解析失敗，回退至原始網址"
@@ -69,4 +68,4 @@ while read -r line || [ -n "$line" ]; do
     fi
 done < "$SRC"
 
-echo "✨ 任務完成！請到 /sdcard/Download 查看 twTV.m3u"
+echo "✨ 任務完成！"
