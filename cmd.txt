@@ -45,7 +45,7 @@ while read -r line || [ -n "$line" ]; do
             if echo "$LINK" | grep -qi "channel"; then
                 REAL=$(python3 -m yt_dlp -g "$LINK" 2>/dev/null)
             else
-                REAL="${LINK}|User-Agent=${UA}&Referer=https://www.4gtv.tv/&Origin=https://www.4gtv.tv"
+                REAL=$(python3 -m yt_dlp --user-agent "$UA" --referer "https://www.4gtv.tv/" -g "$LINK" 2>/dev/null)
             fi
             
         elif echo "$LINK" | grep -qi "iill.top"; then
@@ -72,3 +72,4 @@ while read -r line || [ -n "$line" ]; do
 done < "$SRC"
 
 echo "✨ 任務完成！"
+
