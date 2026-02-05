@@ -1,59 +1,72 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-# 設定路徑
+# --- 環境變數設定 ---
+# 遠端 GitHub 頻道清單
 URL_LIST='https://raw.githubusercontent.com/hqpstw-hub/-/refs/heads/main/twTVlist.txt'
+# Termux 本地暫存路徑
 SRC='/data/data/com.termux/files/home/twTVlist.txt'
+# 最終輸出的 m3u 檔案位置 (供 TiviMate 或 VLC 讀取)
 DEST='/sdcard/Download/twTV.m3u'
+# YouTube 登入憑證 (用於解析受限影片)
 COOKIE='/data/data/com.termux/files/home/youtube.com_cookies.txt'
 
-# 1. 下載與環境清理
+# 1. 抓取最新清單並清理斷行符號
+# 使用時間戳 ?t= 確保不被 GitHub 緩存影響
 curl -L -k -s "${URL_LIST}?t=$(date +%s)" -o "$SRC"
 sed -i 's/\r//g' "$SRC"
 
+# 初始化 m3u 檔案
 echo "#EXTM3U" > "$DEST"
-echo "🚀 [全頻道降維轉發模式：119 頻道全量注入]"
+echo "🚀 [全頻道注入模式：正在同步雲端清單至本地儲存]"
 
 CURRENT_GRP="未分類"
 UA="VLC/3.0.12"
 
+# 2. 開始逐行掃描清單
 while read -r line || [ -n "$line" ]; do
+    # 去除前後空白
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     [ -z "$line" ] && continue
 
-    # 2. 分組識別
+    # 識別分組 (以 # 開頭的行)
     if echo "$line" | grep -q "^#" && ! echo "$line" | grep -q ","; then
         CURRENT_GRP=$(echo "$line" | tr -d '#')
-        echo "📍 處理區域: $CURRENT_GRP"
+        echo "📍 目前分組: $CURRENT_GRP"
         continue
     fi
 
-    # 3. 頻道解析與偽裝路徑判定
+    # 頻道解析：分割名稱與連結
     NAME=$(echo "$line" | cut -d',' -f1)
     LINK=$(echo "$line" | grep -oEi "[a-zA-Z0-9]+://[^.]+\.[^/]+/.+" | head -n 1)
 
     if [ -n "$LINK" ]; then
-        # --- 分流處理：注入全套標頭以相容 2.1.5 ---
+        # --- 核心邏輯：針對不同來源進行標頭注入或動態解析 ---
+        
+        # A. YouTube 來源：調用 yt-dlp 獲取直連 (格式選取最佳視訊)
         if echo "$LINK" | grep -qi "youtube.com"; then
-            REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f b "$LINK" 2>/dev/null)
+            REAL=$(python3 -m yt_dlp --cookies "$COOKIE" -g -f "best[ext=mp4]/best" "$LINK" 2>/dev/null)
+            
+        # B. 特定平台：注入 User-Agent 與 Referer 繞過驗證
         elif echo "$LINK" | grep -qiE "iill.top|4gtv"; then
             REAL="${LINK}|User-Agent=${UA}&Referer=https://tv.iill.top/&Origin=https://tv.iill.top"
+            
+        # C. 一般來源：直接透傳
         else
             REAL="$LINK"
         fi
 
-        # 4. 直接輸出 (不再檢測是否連通，確保數量達標)
+        # 3. 寫入本地 m3u 檔案
         if [ -n "$REAL" ]; then
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$REAL" >> "$DEST"
-            echo "   ✅ $NAME 已寫入"
+            echo "   ✅ $NAME 成功寫入"
         else
-            # 解析失敗的保留原始連結，讓 TiviMate 自己嘗試
+            # 若解析失敗 (如 YouTube 網址失效)，保留原始連結讓播放器自救
             echo "#EXTINF:-1 group-title=\"$CURRENT_GRP\",$NAME" >> "$DEST"
             echo "$LINK" >> "$DEST"
-            echo "   ⚠️ $NAME 解析失敗，輸出原始網址"
+            echo "   ⚠️ $NAME 解析失敗，回退至原始網址"
         fi
     fi
 done < "$SRC"
 
-echo "✨ 全部 119 個頻道處理完成！"
-
+echo "✨ 任務完成！請到 /sdcard/Download 查看 twTV.m3u"
