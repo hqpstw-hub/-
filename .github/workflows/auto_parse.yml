@@ -1,9 +1,6 @@
 name: TV_Update
 on:
-  schedule:
-    - cron: '0 */4 * * *' # 每 4 小時跑一次
   workflow_dispatch:      # 允許手動點擊執行
-
 jobs:
   update_list:
     runs-on: ubuntu-latest
@@ -16,17 +13,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 安裝解析工具
-        run: |
-          pip install yt-dlp requests
-
-      - name: 執行解析
-        run: python parser.py
+      - name: 執行排版
+        run: python reformat.py
 
       - name: 推送回倉庫
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add cloud_tv.m3u
-          git commit -m "自動更新電視清單: $(date)" || exit 0
+          git commit -m "自動格式電視清單: $(date)" || exit 0
           git push
