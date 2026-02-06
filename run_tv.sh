@@ -13,7 +13,9 @@ echo "📡 正在從雲端同步指令並洗滌格式..."
 curl -s -L "$CMD_URL" | tr -d '\r' | bash
 
 echo "🚀 本地執行序列結束。"
+rm -rf ~/.cache/yt-dlp/*
 EOF
 
 # 賦予執行權限
 chmod +x ~/run_tv.sh
+
