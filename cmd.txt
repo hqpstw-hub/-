@@ -1,4 +1,5 @@
 export PATH=$PATH:/data/data/com.termux/files/usr/bin
+pip install --upgrade yt-dlp > /dev/null 2>&1
 curl -s -L "https://raw.githubusercontent.com/hqpstw-hub/-/main/cloud_tv.m3u" > /sdcard/Download/tw_raw.m3u
 
 echo "#EXTM3U" > /sdcard/Download/twTV.m3u
@@ -15,3 +16,4 @@ while read -r line; do
     esac
 done < /sdcard/Download/tw_raw.m3u
 echo "✅ 本地解析刷新完成。"
+
