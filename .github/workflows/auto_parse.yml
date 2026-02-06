@@ -1,31 +1,26 @@
 name: TV_Update
 on:
   schedule:
-  - cron: '0 */4 * * *' # 每 4 小時跑一次
-  workflow_dispatch:      # 允許手動點擊執行
+    - cron: '0 */4 * * *'  # 每 4 小時自動執行
+  workflow_dispatch:        # 支援手動點擊執行
 jobs:
   update_list:
     runs-on: ubuntu-latest
     steps:
       - name: 檢出代碼
         uses: actions/checkout@v3
-
-      - name: 安裝 Python 與環境
+      - name: 安裝 Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: 安裝格式工具
-        run: |
-          pip install yt-dlp requests
-
-      - name: 執行排版
+      - name: 安裝必要工具
+        run: pip install requests
+      - name: 執行格式化工廠
         run: python reformat.py
-
-      - name: 推送回倉庫
+      - name: 推送更新至倉庫
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add cloud_tv.m3u
-          git commit -m "自動格式電視清單: $(date)" || exit 0
+          git commit -m "自動格式化清單: $(date)" || exit 0
           git push
